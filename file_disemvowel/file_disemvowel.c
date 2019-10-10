@@ -44,11 +44,10 @@ void disemvowel(FILE* inputFile, FILE* outputFile){
     size_t buffer_size = 100;
     char* str;
 
-    printf("in disemvowel \n");
-
     while(getline(&buffer, &buffer_size, inputFile) > 0){
         str = disemvowel_line(buffer);
         fwrite(str, 1, strlen(str), outputFile);
+        free(str);
     }
 }
 
@@ -76,11 +75,7 @@ int main(int argc, char* argv[]){
         printf("else case");
     }
 
-    printf("out of if \n");
-
     disemvowel(inputFile, outputFile);
-
-    printf("past disemvowel \n");
 
     fclose(inputFile);
     fclose(outputFile);
