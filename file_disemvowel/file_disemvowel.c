@@ -40,15 +40,17 @@ char *disemvowel_line(char *str) {
 }
 
 void disemvowel(FILE* inputFile, FILE* outputFile){
-    char* buffer;
+    char *buffer = NULL;
     size_t buffer_size = 100;
     char* str;
 
-    while(getline(&buffer, &buffer_size, inputFile) > 0){
+    while(getline(&buffer, &buffer_size, inputFile) != -1){
         str = disemvowel_line(buffer);
         fwrite(str, 1, strlen(str), outputFile);
         free(str);
     }
+
+    free(buffer);
 }
 
 int main(int argc, char* argv[]){
