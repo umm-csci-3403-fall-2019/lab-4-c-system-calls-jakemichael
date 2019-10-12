@@ -55,26 +55,20 @@ void disemvowel(FILE* inputFile, FILE* outputFile){
 
 int main(int argc, char* argv[]){
 
-    printf(argv[0]);
-    printf("\n");
-    printf(argv[1]);
-    printf("\n");
-    printf(argv[2]);
-    printf("\n");
-
     FILE *inputFile;
     FILE *outputFile;
 
     if(argc == 1) {
         inputFile = stdin;
         outputFile = stdout;
-        printf("1 argc \n");
     } else if (argc == 2) {
-        printf("2 argc \n");
         inputFile = fopen(argv[1], "r");
         outputFile = stdout;
+    } else if (argc == 3){
+        inputFile = fopen(argv[1], "r");
+        outputFile = fopen(argv[2], "w");
     } else {
-        printf("else case");
+        printf("oof"); //should be handled better than this
     }
 
     disemvowel(inputFile, outputFile);
