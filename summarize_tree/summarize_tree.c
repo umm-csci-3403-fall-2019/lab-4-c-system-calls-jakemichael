@@ -45,7 +45,7 @@ void process_directory(const char* path) {
    * with a matching call to chdir() to move back out of it when you're
    * done.
    */
-  chdir(path);
+
   DIR *dir;
   struct dirent *dp;
   char* fileName;
@@ -53,35 +53,32 @@ void process_directory(const char* path) {
   char* one = ".";
   char* two = "..";
   
-  operdir(path);
+  dir = opendir(path);
+  chdir(path);
 
-  while((dp = readdir(path) != NULL) ){
+  if(dir!=NULL){
 
-    if(strcmp(path,one) || strcmp(path,two)){
-      continue;    
-    } else if(dp->d_type == is_dir(path)) {
-      num_dirs++;
+    while((dp=readdir(dir)) ){
+
+      if(strcmp(dp->d_name, one)!=0 && strcmp(dp->d_name,two)!=0){
+        fileName = dp->d_name;
+        process_path(fileName);  
+      }
     }
-    
-    
-    //dp = readdir(dir);
-    fileName = (dp->d_name);
-    
-    printf("%d", num_dirs);
 
-
-    process_directory(fileName);
+    num_dirs++;
+    
+    chdir(two);
   }
-  
-  closedir(dir);
 
-  printf("processed directory\n");
+  closedir(dir);
 }
 
 void process_file(const char* path) {
   /*
    * Update the number of regular files.
    */
+  num_regular++;
 }
 
 void process_path(const char* path) {
@@ -94,8 +91,6 @@ void process_path(const char* path) {
 
 int main (int argc, char *argv[]) {
 
-  // Ensure an argument was provided.
-  printf(is_dir(argv[1]) ? "true" : "false");
   if (argc != 2) {
     printf ("Usage: %s <path>\n", argv[0]);
     printf ("       where <path> is the file or root of the tree you want to summarize.\n");
