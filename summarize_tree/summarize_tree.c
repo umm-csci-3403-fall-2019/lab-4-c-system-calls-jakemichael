@@ -24,7 +24,7 @@ bool is_dir(const char* path) {
 
   stat(newPath, &buf);
 
-  return S_ISDIR(buf.st_mode);;
+  return S_ISDIR(buf.st_mode);
 }
 
 /* 
@@ -48,14 +48,25 @@ void process_directory(const char* path) {
   chdir(path);
   DIR *dir;
   struct dirent *dp;
+  char* fileName;
+
   char* one = ".";
   char* two = "..";
-  while(is_dir(path) ){
-    dir = opendir(path);
-    char* fileName;
-    dp = readdir(dir);
+  
+  operdir(path);
+
+  while((dp = readdir(path) != NULL) ){
+
+    if(strcmp(path,one) || strcmp(path,two)){
+      continue;    
+    } else if(dp->d_type == is_dir(path)) {
+      num_dirs++;
+    }
+    
+    
+    //dp = readdir(dir);
     fileName = (dp->d_name);
-    num_dirs++;
+    
     printf("%d", num_dirs);
 
 
@@ -84,6 +95,7 @@ void process_path(const char* path) {
 int main (int argc, char *argv[]) {
 
   // Ensure an argument was provided.
+  printf(is_dir(argv[1]) ? "true" : "false");
   if (argc != 2) {
     printf ("Usage: %s <path>\n", argv[0]);
     printf ("       where <path> is the file or root of the tree you want to summarize.\n");
