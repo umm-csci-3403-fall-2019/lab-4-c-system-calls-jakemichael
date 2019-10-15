@@ -18,13 +18,8 @@ bool is_dir(const char* path) {
    */
 
   struct stat buf;
-
-  char *newPath = malloc(strlen(path) + 1);
-  newPath = strncpy(newPath, path, strlen(path));
-
-  stat(newPath, &buf);
-
-  return S_ISDIR(buf.st_mode);;
+  stat(path, &buf);
+  return S_ISDIR(buf.st_mode);
 }
 
 /* 
@@ -45,32 +40,39 @@ void process_directory(const char* path) {
    * with a matching call to chdir() to move back out of it when you're
    * done.
    */
-  chdir(path);
+
   DIR *dir;
   struct dirent *dp;
+  char* fileName;
+
   char* one = ".";
   char* two = "..";
-  while(is_dir(path) ){
-    dir = opendir(path);
-    char* fileName;
-    dp = readdir(dir);
-    fileName = (dp->d_name);
-    num_dirs++;
-    printf("%d", num_dirs);
-
-
-    process_directory(fileName);
-  }
   
-  closedir(dir);
+  dir = opendir(path);
+  chdir(path);
 
-  printf("processed directory\n");
+  if(dir!=NULL){
+
+    while((dp=readdir(dir)) ){
+
+      if(strcmp(dp->d_name, one) && strcmp(dp->d_name,two)){
+        fileName = dp->d_name;
+        process_path(fileName);  
+      }
+    }
+    num_dirs++;
+    chdir(two);
+  }
+
+  free(dp);
+  closedir(dir);
 }
 
 void process_file(const char* path) {
   /*
    * Update the number of regular files.
    */
+  num_regular++;
 }
 
 void process_path(const char* path) {
@@ -83,7 +85,6 @@ void process_path(const char* path) {
 
 int main (int argc, char *argv[]) {
 
-  // Ensure an argument was provided.
   if (argc != 2) {
     printf ("Usage: %s <path>\n", argv[0]);
     printf ("       where <path> is the file or root of the tree you want to summarize.\n");
