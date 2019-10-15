@@ -18,12 +18,7 @@ bool is_dir(const char* path) {
    */
 
   struct stat buf;
-
-  char *newPath = malloc(strlen(path) + 1);
-  newPath = strncpy(newPath, path, strlen(path));
-
-  stat(newPath, &buf);
-
+  stat(path, &buf);
   return S_ISDIR(buf.st_mode);
 }
 
@@ -60,17 +55,16 @@ void process_directory(const char* path) {
 
     while((dp=readdir(dir)) ){
 
-      if(strcmp(dp->d_name, one)!=0 && strcmp(dp->d_name,two)!=0){
+      if(strcmp(dp->d_name, one) && strcmp(dp->d_name,two)){
         fileName = dp->d_name;
         process_path(fileName);  
       }
     }
-
     num_dirs++;
-    
     chdir(two);
   }
 
+  free(dp);
   closedir(dir);
 }
 
